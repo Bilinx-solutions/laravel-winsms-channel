@@ -48,6 +48,7 @@ a `toWinSMS` method.
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Shipper\WinSMS\WinSMSChannel;
+use Shipper\WinSMS\WinSMSMessage;
 
 class ConfirmationNotification extends Notification
 {
@@ -73,13 +74,12 @@ class ConfirmationNotification extends Notification
      * @param mixed $notifiable
      * @return array
      */
-    public function toOrange($notifiable):array
+    public function toWinSMS($notifiable):WinSMSMessage
     {
-        return [
-            'to' => $notifiable->phone_number,
-            'from' => 'MyApp',
-            'text' => 'Your account has been created successfully'
-        ];
+        return (new WinSMSMessage())
+            ->to($notifiable->phone_number)
+            ->from('MyApp')
+            ->content('Your account has been created successfully');
     }
 }
 ```
@@ -88,60 +88,18 @@ class ConfirmationNotification extends Notification
 
 - `to` (the receiver phone number)
 - `from` (the sender phone number)
-- `text` (the actual text message)
+- `content` (the actual text message)
 
-### Configuration file
+### Using Facade
+
+You can also use the facade to send sms notification.
 
 ```php
-<?php
+use Shipper\WinSMS\Facades\WinSMS;
 
-return [
-    /****
-     * The country code that must be prepend to all phone number.
-     * If the phone number already start with the `+`(plus) symbol,
-     * the country code will not be applied.
-     */
-    'country_code' => null,
-
-    /**
-     * You may wish for all SMS sent by your application to be sent from
-     * the same phone number. Here, you may specify a name and a phone number that is
-     * used globally for all SMS that are sent by your application.
-     */
-    'from' => [
-        'phone_number' => null,
-        'name' => env('APP_NAME')
-    ]
-];
+WinSMS::sendSMS('216XXXXXXXX', 'MyApp', 'Your account has been created successfully');
 ```
-
-### Testing
-
-```bash
-composer test
-```
-
-### Changelog
-
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
-
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
-
-### Security
-
-If you discover any security related issues, please email abouba181@gmail.com instead of using the issue tracker.
-
-## Credits
-
-- [Aboubacar OUATTARA](https://github.com/oza75)
-- [All Contributors](../../contributors)
 
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
-## Laravel Package Boilerplate
-
-This package was generated using the [Laravel Package Boilerplate](https://laravelpackageboilerplate.com).
