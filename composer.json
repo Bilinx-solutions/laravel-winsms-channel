@@ -15,7 +15,10 @@
     "laravel": {
       "providers": [
         "Shipper\\WinSMS\\WinSMSServiceProvider"
-      ]
+      ],
+      "aliases": {
+        "WinSMS": "Shipper\\WinSMS\\Facades\\WinSMS"
+      }
     }
   }
 }

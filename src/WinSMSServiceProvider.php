@@ -25,5 +25,8 @@ class WinSMSServiceProvider extends ServiceProvider
             __DIR__ . '/../config/winsms.php',
             'winsms'
         );
+        $this->app->bind('winsms', function ($app) {
+            return new WinSMSService(config('winsms.api_key'));
+        });
     }
 }
