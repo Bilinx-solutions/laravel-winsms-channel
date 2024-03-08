@@ -16,16 +16,6 @@ class WinSMSServiceProvider extends ServiceProvider
                 __DIR__ . '/../config/winsms.php' => config_path('winsms.php'),
             ], 'config');
         }
-
-        // Register the service
-        $this->app->singleton(WinSMSService::class, function ($app) {
-            return new WinSMSService(config('winsms.api_key'));
-        });
-
-        // Extend the notification channel
-        $this->app->when(WinSMSChannel::class)
-            ->needs(WinSMSService::class)
-            ->give(WinSMSService::class);
     }
 
     public function register()
@@ -35,8 +25,14 @@ class WinSMSServiceProvider extends ServiceProvider
             'winsms'
         );
 
-        $this->app->bind('winsmspro', function ($app) {
+        // Register the service with parameters
+        $this->app->singleton(WinSMSService::class, function ($app) {
             return new WinSMSService(config('winsms.api_key'), config('winsms.sender_id'));
+        });
+
+        // Optional: Bind a simpler key for facade access or other uses
+        $this->app->bind('winsms', function ($app) {
+            return $app->make(WinSMSService::class);
         });
     }
 }
