@@ -2,7 +2,6 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/shipper/laravel-winsms-channel.svg?style=flat-square)](https://packagist.org/packages/shipper/laravel-winsms-channel)
 [![Total Downloads](https://img.shields.io/packagist/dt/shipper/laravel-winsms-channel.svg?style=flat-square)](https://packagist.org/packages/shipper/laravel-winsms-channel)
-![GitHub Actions](https://github.com/shipper/laravel-winsms-channel/actions/workflows/main.yml/badge.svg)
 
 A Laravel Notification Channel to send sms notification to your users in Tunisia using WinSMS.
 More details here [https://www.winsms.tn](https://www.winsms.tn).
@@ -36,6 +35,7 @@ Finally, add a new service in your `config/service.php` file.
 
 return [
     'api_key' => env('WINSMS_API_KEY', ''),
+    'sender_id' => env('WINSMS_SENDER_ID', ''),
 ];
 ```
 
