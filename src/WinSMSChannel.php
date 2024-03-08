@@ -6,20 +6,25 @@ use Illuminate\Notifications\Notification;
 
 class WinSMSChannel
 {
+    protected $winSMSService;
+
+    public function __construct(WinSMSService $winSMSService)
+    {
+        $this->winSMSService = $winSMSService;
+    }
+
     public function send($notifiable, Notification $notification)
     {
         $message = $notification->toWinSMS($notifiable);
 
-        $apiKey = config('winsms.api_key');
-        $to = $notifiable->routeNotificationFor('winsms');
-        $from = $message['from'];
-        $sms = urlencode($message['text']);
+        if (!$message instanceof WinSMSMessage) {
+            return;
+        }
 
-        $url = "https://www.winsmspro.com/sms/sms/api?action=send-sms&api_key={$apiKey}&to={$to}&from={$from}&sms={$sms}";
+        $to = $message->to;
+        $from = $message->from ?? null; // Use default from WinSMSService if not set
+        $text = $message->message;
 
-        // Use file_get_contents or a HTTP client to send the request
-        $response = file_get_contents($url);
-
-        // Handle response
+        $this->winSMSService->sendSMS($to, $from, $text);
     }
 }

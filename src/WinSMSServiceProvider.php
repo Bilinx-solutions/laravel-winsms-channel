@@ -10,13 +10,22 @@ class WinSMSServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        $this->publishes([
-            __DIR__ . '/../config/winsms.php' => config_path('winsms.php'),
-        ]);
+        // Publish the configuration file
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__ . '/../config/winsms.php' => config_path('winsms.php'),
+            ], 'config');
+        }
 
-        Notification::extend('winsms', function ($app) {
-            return new WinSMSChannel();
+        // Register the service
+        $this->app->singleton(WinSMSService::class, function ($app) {
+            return new WinSMSService(config('winsms.api_key'));
         });
+
+        // Extend the notification channel
+        $this->app->when(WinSMSChannel::class)
+            ->needs(WinSMSService::class)
+            ->give(WinSMSService::class);
     }
 
     public function register()
@@ -25,8 +34,5 @@ class WinSMSServiceProvider extends ServiceProvider
             __DIR__ . '/../config/winsms.php',
             'winsms'
         );
-        $this->app->bind('winsms', function ($app) {
-            return new WinSMSService(config('winsms.api_key'));
-        });
     }
 }
