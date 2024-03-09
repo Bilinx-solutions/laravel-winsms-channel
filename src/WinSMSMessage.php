@@ -20,7 +20,7 @@ class WinSMSMessage
 
     public function to(string $to): self
     {
-        $this->to = $to;
+        $this->to = str_replace('+', '', $to);
         return $this;
     }
 
